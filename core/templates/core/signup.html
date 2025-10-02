@@ -1,0 +1,52 @@
+{% extends 'core/base.html' %}
+
+{% load static %}
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/signup.css' %}">
+{% endblock %}
+
+{% block title %}Sign up | {% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-box">
+        <h1 class="logo">Lika</h1>
+
+        {% if errors %}
+            <div class="error-box">
+                <ul>
+                    {% for field, field_errors in errors.items %}
+                        {% for error in field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <form method="post" action="." class="lg:w-1/4 mx-auto">
+            {% csrf_token %}
+
+            <div class="input-box">
+                <input type="email" name="email" placeholder="Электронная почта" required>
+            </div>
+
+
+            <div class="input-box">
+                <input type="password" name="password" placeholder="Пароль" required>
+            </div>
+
+            <div class="input-box">
+                <input type="password" name="password2" placeholder="Подтвердите пароль" required>
+            </div>
+
+            <button class="login-btn" type="submit">Зарегистрироваться</button>
+        </form>
+
+        <div class="login-link">
+            Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

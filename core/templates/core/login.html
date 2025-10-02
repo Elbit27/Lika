@@ -1,0 +1,46 @@
+{% extends 'core/base.html' %}
+
+{% load static %}
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-box">
+        <h1 class="logo">Lika</h1>
+
+        {% if form.errors %}
+            <div class="error-box">
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post" action=".">
+            {% csrf_token %}
+
+            <div class="input-box">
+                <input type="text" name="username" placeholder="Имя пользователя">
+            </div>
+            <div class="input-box">
+                <input type="password" name="password" placeholder="Пароль">
+            </div>
+
+            <button class="login-btn" type="submit">Войти</button>
+        </form>
+
+        <div class="forgot-password">
+            <a href="#">Забыли пароль?</a>
+        </div>
+    </div>
+
+    <div class="signup-box">
+        Ещё нет аккаунта? <a href="{% url 'signup' %}">Регистрация</a>
+    </div>
+</div>
+{% endblock %}
