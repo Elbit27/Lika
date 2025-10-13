@@ -63,6 +63,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 LOGIN_REDIRECT_URL = '/'
 
+
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
@@ -112,7 +113,11 @@ USE_TZ = True
 
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / "static"]  # <-- добавляем эту строку
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+    os.path.join(BASE_DIR, "frontend", "dist"),
+]
 
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static')    1
 

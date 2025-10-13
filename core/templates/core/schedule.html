@@ -1,0 +1,88 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/schedule.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1 class="text-xl font-bold mb-3 text-center">Расписание</h1>
+
+<a href="/api/v1/schedule/add_item/" class="add-subject-btn">
+   Добавить предмет
+</a>
+
+<div class="schedule-container">
+  <table class="schedule-table">
+    <thead>
+      <tr>
+        <th class="subject-col">Предмет</th>
+        <th class="day-col">Пн</th>
+        <th class="day-col">Вт</th>
+        <th class="day-col">Ср</th>
+        <th class="day-col">Чт</th>
+        <th class="day-col">Пт</th>
+        <th class="day-col">Сб</th>
+        <th class="day-col">Вс</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td class="subject-col">{{ item.name }}</td>
+        {% for day_index in "0123456" %}
+        <td class="day-col">
+          <input type="number" min="0" value="0" placeholder="-"
+                 class="day-input" data-day="{{ forloop.counter0 }}"
+                 data-item="{{ forloop.parentloop.counter0 }}" />
+        </td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+
+      <!-- Последняя строка "Итого" -->
+      <tr class="total-row">
+        <td class="subject-col font-bold">Итого</td>
+        {% for day_index in "0123456" %}
+        <td class="day-col font-bold" id="total-{{ forloop.counter0 }}">0</td>
+        {% endfor %}
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const todayIndex = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
+
+    const inputs = document.querySelectorAll(".day-input");
+
+    inputs.forEach(input => {
+        const day = parseInt(input.dataset.day);
+        if(day !== todayIndex){
+            input.disabled = true;
+            input.classList.add("disabled");
+        } else {
+            input.classList.add("active");
+
+            // Считаем total при изменении
+            input.addEventListener("input", () => {
+                const totals = Array(7).fill(0);
+
+                document.querySelectorAll(".day-input").forEach(inp => {
+                    const d = parseInt(inp.dataset.day);
+                    totals[d] += Number(inp.value) || 0;
+                });
+
+                totals.forEach((sum, idx) => {
+                    const el = document.getElementById(`total-${idx}`);
+                    if(el) el.textContent = sum;
+                });
+            });
+        }
+    });
+});
+</script>
+
+{% endblock %}

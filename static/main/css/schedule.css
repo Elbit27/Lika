@@ -1,0 +1,58 @@
+.schedule-container {
+    max-width: 20cm; /* Ограничиваем ширину таблицы */
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+.schedule-table {
+    border-collapse: collapse;
+    width: 100%;
+    text-align: center;
+    font-size: 22px;
+}
+
+.schedule-table th, .schedule-table td {
+    border: 1px solid #999;
+    padding: 2px;
+}
+
+.subject-col {
+    width: 4cm; /* Ширина колонки с предметами */
+    text-align: left;
+    padding-left: 10px;
+}
+
+.day-col {
+    width: 2cm; /* Ширина колонок дней недели */
+}
+
+.day-input {
+    width: 1cm; /* ширина инпута чуть меньше колонки */
+    font-size: 14px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 1px;
+    padding: 0;
+}
+
+/* Цвета для сегодняшнего дня */
+.day-input.active {
+    background-color: #fff;
+}
+
+.day-input.disabled {
+    background-color: #eee;
+    cursor: not-allowed;
+}
+
+.add-subject-btn {
+    position: absolute;
+    right: 15px;  /* сдвиг от правого края */
+    top: 88px;     /* сдвиг от верхнего края */
+    padding: 7px 15px;
+    background-color: #1d4ed8;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 18px;
+}
