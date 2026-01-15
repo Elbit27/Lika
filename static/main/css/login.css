@@ -1,0 +1,119 @@
+
+-----------------------------------------------------------------------------------------
+
+/* Основные стили */
+body {
+    background-color: #fafafa;
+    font-family: Arial, sans-serif;
+}
+
+/* Контейнер формы */
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+/* Блок логина */
+.login-box {
+    background: white;
+    border: 1px solid #dbdbdb;
+    padding: 40px;
+    width: 350px;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Логотип */
+.logo {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Поля ввода */
+.input-box {
+    margin-bottom: 10px;
+}
+
+.input-box input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #dbdbdb;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #fafafa;
+    outline: none;
+}
+
+.input-box input:focus {
+    border-color: #aaa;
+}
+
+/* Кнопка входа */
+.login-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #0095f6;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.login-btn:hover {
+    background-color: #007acc;
+}
+
+/* Ошибки */
+.error-box {
+    background-color: #ffdddd;
+    padding: 10px;
+    border-radius: 5px;
+    color: #d60000;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+/* Ссылка "Forgot password?" */
+.forgot-password {
+    margin-top: 10px;
+}
+
+.forgot-password a {
+    color: #0095f6;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.forgot-password a:hover {
+    text-decoration: underline;
+}
+
+/* Блок "Нет аккаунта?" */
+.signup-box {
+    margin-top: 20px;
+    padding: 20px;
+    background: white;
+    border: 1px solid #dbdbdb;
+    text-align: center;
+    width: 350px;
+    border-radius: 10px;
+}
+
+.signup-box a {
+    color: #0095f6;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.signup-box a:hover {
+    text-decoration: underline;
+}

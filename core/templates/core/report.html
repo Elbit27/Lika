@@ -1,0 +1,66 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'report/css/report.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="report-page">
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active">📈 Summary</button>
+    <button class="tab">📋 Detail</button>
+  </div>
+
+<!--  &lt;!&ndash; Activity Summary &ndash;&gt;-->
+<!--  <h2 class="section-title">Activity Summary</h2>-->
+
+<!--  <div class="summary-cards">-->
+<!--    <div class="card">-->
+<!--      <div class="card-icon">🕒</div>-->
+<!--      <div class="card-value" id="hours">0</div>-->
+<!--      <div class="card-label">hours focused</div>-->
+<!--    </div>-->
+
+<!--    <div class="card">-->
+<!--      <div class="card-icon">📅</div>-->
+<!--      <div class="card-value" id="days">0</div>-->
+<!--      <div class="card-label">days accessed</div>-->
+<!--    </div>-->
+
+<!--    <div class="card">-->
+<!--      <div class="card-icon">🔥</div>-->
+<!--      <div class="card-value" id="streak">0</div>-->
+<!--      <div class="card-label">day streak</div>-->
+<!--    </div>-->
+<!--  </div>-->
+
+  <!-- Focus Hours -->
+  <h2 class="section-title">Focus Hours</h2>
+
+  <div class="chart-controls">
+    <div class="period">
+      <button class="period-btn active" data-period="week">Week</button>
+      <button class="period-btn" data-period="month">Month</button>
+      <button class="period-btn" data-period="year">Year</button>
+    </div>
+
+    <div class="week-switch">
+      <button id="prevWeek">‹</button>
+      <span>This Week</span>
+      <button id="nextWeek">›</button>
+    </div>
+  </div>
+
+  <!-- Chart -->
+  <div class="chart-box">
+    <canvas id="reportChart"></canvas>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'report/js/report.js' %}"></script>
+{% endblock %}

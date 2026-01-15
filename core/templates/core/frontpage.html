@@ -1,0 +1,68 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'main/css/frontpage.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h1>Lika</h1>
+        <p>Личный помощник для планирования, учёта и фокуса</p>
+
+        <div class="hero-buttons">
+
+            {% if request.user.is_authenticated %}
+                <a href="/api/v1/schedule/" class="btn primary">
+                    Расписание
+                </a>
+            {% else %}
+                <a href="/api/v1/accounts/login/" class="btn primary">
+                    Войти
+                </a>
+                <a href="/api/v1/accounts/signup/" class="btn secondary">
+                    Регистрация
+                </a>
+            {% endif %}
+
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <h2>Возможности</h2>
+    <div class="features-grid">
+        <div class="feature-card">
+            <h3>📅 Планирование</h3>
+            <p>Управляй своим временем и задачами</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>📊 Аналитика</h3>
+            <p>Отслеживай нагрузку и продуктивность</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>⚙️ Минимализм</h3>
+            <p>Ничего лишнего — только фокус</p>
+        </div>
+    </div>
+</section>
+
+<section class="cta">
+    <h2>Начни прямо сейчас</h2>
+
+    {% if request.user.is_authenticated %}
+        <p>Открой своё расписание и продолжай работу</p>
+        <a href="/api/v1/schedule/" class="btn primary">
+            Перейти к расписанию
+        </a>
+    {% else %}
+        <p>Войди или зарегистрируйся, чтобы начать</p>
+        <a href="/api/v1/accounts/login/" class="btn primary">
+            Войти
+        </a>
+    {% endif %}
+</section>
+{% endblock %}
