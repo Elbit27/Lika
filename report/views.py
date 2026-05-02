@@ -14,62 +14,51 @@ def report_page(request):
     return render(request, 'core/report.html')
 
 
+from django.db.models.functions import TruncDate
 
 @api_view(['GET'])
 def report_data(request):
     period = request.GET.get('period', 'week')
-    offset = int(request.GET.get('offset', 0))  # сдвиг периода
-    today = timezone.now()
+    offset = int(request.GET.get('offset', 0))
+    today = timezone.now().date()
 
     if period == 'week':
-        # Пн этой недели
-        current_monday = today - timedelta(days=today.weekday())
-        start_date = current_monday + timedelta(weeks=offset)
+        start_date = today - timedelta(days=today.weekday()) + timedelta(weeks=offset)
         end_date = start_date + timedelta(days=6)
-
     elif period == 'month':
-        year = today.year
-        month = today.month + offset
-        # корректируем год и месяц, если вышли за пределы 1-12
-        while month > 12:
-            month -= 12
-            year += 1
-        while month < 1:
-            month += 12
-            year -= 1
-        start_date = date(year, month, 1)
-        last_day = calendar.monthrange(year, month)[1]
-        end_date = date(year, month, last_day)
-
+        # Вычисляем первый день месяца без циклов
+        total_months = today.year * 12 + (today.month - 1) + offset
+        year, month = divmod(total_months, 12)
+        start_date = date(year, month + 1, 1)
+        last_day = calendar.monthrange(year, month + 1)[1]
+        end_date = date(year, month + 1, last_day)
     elif period == 'year':
         year = today.year + offset
         start_date = date(year, 1, 1)
         end_date = date(year, 12, 31)
-
     else:
-        # по умолчанию неделя
-        current_monday = today - timedelta(days=today.weekday())
-        start_date = current_monday
-        end_date = start_date + timedelta(days=6)
+        return Response({"error": "Invalid period"}, status=400)
 
-    # группировка по дням недели (1=Mon ... 7=Sun)
+    # Группируем по конкретным датам, а не по дням недели
     queryset = (
         Poma.objects
         .filter(created_at__date__gte=start_date, created_at__date__lte=end_date)
-        .annotate(weekday=ExtractWeekDay('created_at'))
-        .values('weekday')
+        .annotate(date=TruncDate('created_at'))
+        .values('date')
         .annotate(count=Count('id'))
+        .order_by('date')
     )
 
-    # соответствие чисел названиям дней (неделя с Пн)
-    days_map = {1: 'Mon', 2: 'Tue', 3: 'Wed', 4: 'Thu', 5: 'Fri', 6: 'Sat', 7: 'Sun'}
-    # сдвигаем ExtractWeekDay: 1=Sun → 7, 2=Mon →1, ...
-    data_dict = {i: 0 for i in range(1, 8)}
-    for item in queryset:
-        original = item['weekday']  # 1=Sun, 2=Mon ... 7=Sat
-        shifted = original - 1 if original != 1 else 7
-        data_dict[shifted] = item['count']
-
-    result = [{'day': days_map[i], 'count': data_dict[i]} for i in range(1, 8)]
+    # Для недели вернем старый формат (Mon, Tue...), для остального — даты
+    if period == 'week':
+        days_map = {0: 'Mon', 1: 'Tue', 2: 'Wed', 3: 'Thu', 4: 'Fri', 5: 'Sat', 6: 'Sun'}
+        data_dict = {day: 0 for day in days_map.values()}
+        for item in queryset:
+            weekday_name = days_map[item['date'].weekday()]
+            data_dict[weekday_name] += item['count']
+        result = [{'day': k, 'count': v} for k, v in data_dict.items()]
+    else:
+        # Возвращаем [{'date': '2026-05-01', 'count': 5}, ...]
+        result = list(queryset)
 
     return Response(result)

@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const itemId = tr.dataset.itemId;
 
-            fetch("/api/v1/schedule/update_poma/", {
+            fetch("/schedule/update_poma/", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded",

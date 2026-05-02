@@ -2,7 +2,7 @@
     --bg-graphite: #23272e;        /* Основной фон (не черный) */
     --card-graphite: #2d323b;      /* Карточка чуть светлее */
     --input-bg: #1c2128;           /* Внутри инпутов */
-    --accent-red: #9B111E;         /* Твой основной красный */
+    --accent-red: #9B111E;         /* Оосновной красный */
     --accent-red-hover: #b31624;   /* Красный при наведении */
     --text-white: #adbac7;         /* Приглушенный белый */
     --text-bright: #ffffff;
@@ -10,7 +10,6 @@
 }
 
 .login-wrapper {
-    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;

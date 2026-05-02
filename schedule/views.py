@@ -47,7 +47,7 @@ def schedule_view(request):
             else:
                 item_day_counts[item.id][rus_day] = ""
 
-    return render(request, 'core/schedule.html', {
+    return render(request, 'schedule/schedule.html', {
         'items': items,
         'days': days,
         'item_day_counts': item_day_counts,
@@ -57,7 +57,7 @@ def schedule_view(request):
 
 
 class ItemCreateView(generic.View):
-    template_name = 'core/add_item.html'
+    template_name = 'schedule/add_item.html'
 
     def get(self, request, *args, **kwargs):
         items = Item.objects.filter(user=request.user)

@@ -10,7 +10,6 @@
 /* --- Hero Section --- */
 .hero-wrapper {
     position: relative;
-    padding-top: 60px;
     background-color: var(--bg-graphite);
 }
 
@@ -49,24 +48,18 @@
 
 /* --- Кнопки (Исправлено) --- */
 .btn-lika {
-    padding: 14px 32px;
+    padding: 14px 28px;
     border-radius: 12px;
-    font-weight: 600;
+    font-weight: 700;
     text-decoration: none;
-    transition: all 0.3s ease;
-    /* Изменено здесь: inline-flex вместо flex */
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    cursor: pointer;
-    border: none;
+    transition: 0.3s;
+    display: inline-block;
 }
 
 .primary-glow {
     background-color: var(--accent-red);
-    color: white !important; /* Форсируем белый цвет текста */
-    box-shadow: 0 8px 24px rgba(155, 17, 30, 0.3);
+    color: white !important;
+    box-shadow: 0 10px 20px rgba(141, 169, 196, 0.3);
 }
 
 .primary-glow:hover {

@@ -9,18 +9,23 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const ctx = canvas.getContext("2d");
     let chart;
+    let currentPeriod = "week";
+    let offset = 0;
 
-    let currentPeriod = "week"; // week / month / year
-    let offset = 0; // сдвиг текущего периода
-
+    // Вспомогательная функция для красивого формата дат
     function formatDate(date) {
-        const options = { day: "2-digit", month: "short", year: "numeric" };
-        return date.toLocaleDateString("en-US", options);
+        return date.toLocaleDateString("ru-RU", { day: "2-digit", month: "short" });
     }
 
     async function fetchData() {
-        const res = await fetch(`/api/v1/report/data/?period=${currentPeriod}&offset=${offset}`);
-        return await res.json();
+        try {
+            const res = await fetch(`/report/data/?period=${currentPeriod}&offset=${offset}`);
+            if (!res.ok) throw new Error("Ошибка загрузки данных");
+            return await res.json();
+        } catch (err) {
+            console.error(err);
+            return [];
+        }
     }
 
     function renderChart(labels, values) {
@@ -31,17 +36,30 @@ document.addEventListener("DOMContentLoaded", async () => {
             data: {
                 labels: labels,
                 datasets: [{
-                    label: "Pomodoros",
+                    label: "Завершенные Pomodoro",
                     data: values,
-                    backgroundColor: "rgba(255, 153, 153, 0.3)",
-                    borderColor: "rgba(255, 153, 153, 1)",
-                    borderWidth: 2
+                    backgroundColor: "rgba(155, 17, 30, 0.4)", // Твой акцентный красный с прозрачностью
+                    borderColor: "rgba(155, 17, 30, 1)",
+                    borderWidth: 2,
+                    borderRadius: 6
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 scales: {
-                    y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1, color: "#768390" },
+                        grid: { color: "rgba(255, 255, 255, 0.05)" }
+                    },
+                    x: {
+                        ticks: { color: "#768390" },
+                        grid: { display: false }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
                 }
             }
         });
@@ -52,30 +70,30 @@ document.addEventListener("DOMContentLoaded", async () => {
         let startDate, endDate;
 
         if (currentPeriod === "week") {
-            const currentMonday = new Date(today);
-            currentMonday.setDate(today.getDate() - today.getDay() + 1 + offset * 7);
-            startDate = currentMonday;
-            endDate = new Date(currentMonday);
+            startDate = new Date(today);
+            // Находим понедельник текущей недели с учетом смещения
+            const dayDiff = today.getDay() === 0 ? 6 : today.getDay() - 1;
+            startDate.setDate(today.getDate() - dayDiff + (offset * 7));
+
+            endDate = new Date(startDate);
             endDate.setDate(startDate.getDate() + 6);
 
-            if (offset === 0) weekLabel.textContent = "This Week";
-            else if (offset === -1) weekLabel.textContent = "Last Week";
-            else weekLabel.textContent = `${formatDate(startDate)} — ${formatDate(endDate)}`;
-
-            nextBtn.disabled = offset >= 0;
+            weekLabel.textContent = offset === 0 ? "Эта неделя" : `${formatDate(startDate)} — ${formatDate(endDate)}`;
         }
         else if (currentPeriod === "month") {
             startDate = new Date(today.getFullYear(), today.getMonth() + offset, 1);
             endDate = new Date(today.getFullYear(), today.getMonth() + offset + 1, 0);
-            weekLabel.textContent = `${formatDate(startDate)} — ${formatDate(endDate)}`;
-            nextBtn.disabled = offset >= 0;
+
+            const monthName = startDate.toLocaleString('ru-RU', { month: 'long', year: 'numeric' });
+            weekLabel.textContent = monthName.charAt(0).toUpperCase() + monthName.slice(1);
         }
         else if (currentPeriod === "year") {
-            startDate = new Date(today.getFullYear() + offset, 0, 1);
-            endDate = new Date(today.getFullYear() + offset, 11, 31);
-            weekLabel.textContent = `${formatDate(startDate)} — ${formatDate(endDate)}`;
-            nextBtn.disabled = offset >= 0;
+            const targetYear = today.getFullYear() + offset;
+            weekLabel.textContent = `${targetYear} год`;
         }
+
+        // Блокируем кнопку "вперед", если мы в текущем периоде
+        nextBtn.disabled = offset >= 0;
     }
 
     async function updateChart() {
@@ -84,55 +102,29 @@ document.addEventListener("DOMContentLoaded", async () => {
         let values = [];
 
         if (currentPeriod === "week") {
+            // Бэкенд возвращает [{day: 'Mon', count: 5}, ...]
             labels = data.map(d => d.day);
             values = data.map(d => d.count);
         }
-
         else if (currentPeriod === "month") {
-            labels = ["1–7", "8–14", "15–21", "22–End"];
+            labels = ["1-7", "8-14", "15-21", "22+"];
             values = [0, 0, 0, 0];
 
-            // безопасно вычисляем целевой месяц
-            const today = new Date();
-            const rawMonth = today.getMonth() + offset;
-
-            const targetYear = today.getFullYear() + Math.floor(rawMonth / 12);
-            const targetMonth = ((rawMonth % 12) + 12) % 12; // 0..11
-
-            const lastDay = new Date(targetYear, targetMonth + 1, 0).getDate();
-
             data.forEach(d => {
-                const parsed = new Date(d.date);
-
-                // фильтрация по месяцу и году
-                if (parsed.getFullYear() !== targetYear ||
-                    parsed.getMonth() !== targetMonth) {
-                    return;
-                }
-
-                const day = parsed.getDate();
-                const count = Number(d.count) || 0;
-
-                if (day >= 1 && day <= 7) values[0] += count;
-                else if (day >= 8 && day <= 14) values[1] += count;
-                else if (day >= 15 && day <= 21) values[2] += count;
-                else if (day >= 22 && day <= lastDay) values[3] += count;
+                const day = new Date(d.date).getDate();
+                if (day <= 7) values[0] += d.count;
+                else if (day <= 14) values[1] += d.count;
+                else if (day <= 21) values[2] += d.count;
+                else values[3] += d.count;
             });
-
-            console.log("month:", targetMonth + 1, "year:", targetYear);
-            console.log("values:", values);
         }
-
-
         else if (currentPeriod === "year") {
-            labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
+            labels = ["Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"];
             values = Array(12).fill(0);
 
             data.forEach(d => {
-                const month = new Date(d.date).getMonth();
-                values[month] += d.count;
+                const monthIndex = new Date(d.date).getMonth();
+                values[monthIndex] += d.count;
             });
         }
 
@@ -140,21 +132,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         updatePeriodLabel();
     }
 
-
-    // Кнопки периода
+    // Слушатели для переключения периодов (Неделя/Месяц/Год)
     periodBtns.forEach(btn => {
         btn.addEventListener("click", () => {
             periodBtns.forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
 
             currentPeriod = btn.dataset.period;
-            offset = 0;
-
+            offset = 0; // Сбрасываем смещение при смене периода
             updateChart();
         });
     });
 
-    // Стрелки
+    // Навигация (Назад/Вперед)
     prevBtn.addEventListener("click", () => {
         offset -= 1;
         updateChart();
@@ -167,5 +157,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
+    // Инициализация при загрузке
     updateChart();
 });

@@ -31,7 +31,7 @@
                 <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="notificationDropdown" style="min-width: 300px;">
                     <li class="px-3 py-2 fw-bold border-bottom">Уведомления</li>
                     <div id="notification-items" style="max-height: 300px; overflow-y: auto;">
-                        <li class="px-3 py-3 text-muted text-center" style="font-size: 0.85rem;">Нет новых уведомлений</li>
+                        <li class="px-3 py-3 text-white text-center" style="font-size: 0.85rem;">Нет новых уведомлений</li>
                     </div>
                 </ul>
             </div>
@@ -52,11 +52,11 @@
                 <div class="dropdown-menu dropdown-menu-end user-side-panel" aria-labelledby="userDropdown">
 
                     <a href="{% url 'schedule' %}" class="side-item card-action">
-                        <i class="bi bi-table"></i> <span>Расписание</span>
+                        <i class="bi bi-table"></i> <span>Schedule</span>
                     </a>
 
                     <a href="{% url 'report_page' %}" class="side-item card-action">
-                        <i class="bi bi-book"></i> <span>Report</span>
+                        <i class="bi bi-bar-chart-line"></i> <span>Report</span>
                     </a>
 
                     <a href="/accounts/logout/" class="side-item card-logout">
@@ -84,11 +84,11 @@
         {% if request.user.is_authenticated %}
 
             <a href="{% url 'schedule' %}" class="side-item card-action">
-                <i class="bi bi-table"></i> <span>Расписание</span>
+                <i class="bi bi-table"></i> <span>Schedule</span>
             </a>
 
             <a href="{% url 'report_page' %}" class="side-item card-action">
-                <i class="bi bi-book"></i> <span>Report</span>
+                <i class="bi bi-report"></i> <span>Report</span>
             </a>
 
 
