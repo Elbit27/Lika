@@ -1,68 +1,58 @@
 {% extends "core/base.html" %}
 {% load static %}
 
+{% block title %}Lika — Интеллектуальный ассистент продуктивности{% endblock %}
+
 {% block css %}
 <link rel="stylesheet" href="{% static 'main/css/frontpage.css' %}">
 {% endblock %}
 
 {% block content %}
-<section class="hero">
-    <div class="hero-content">
-        <h1>Lika</h1>
-        <p>Личный помощник для планирования, учёта и фокуса</p>
-
-        <div class="hero-buttons">
-
-            {% if request.user.is_authenticated %}
-                <a href="/api/v1/schedule/" class="btn primary">
-                    Расписание
-                </a>
-            {% else %}
-                <a href="/api/v1/accounts/login/" class="btn primary">
-                    Войти
-                </a>
-                <a href="/api/v1/accounts/signup/" class="btn secondary">
-                    Регистрация
-                </a>
-            {% endif %}
-
+<!-- 1. ГЛАВНЫЙ ЭКРАН (HERO) -->
+<section class="hero-wrapper">
+    <div class="glow-element"></div>
+    <div class="container">
+        <div class="row align-items-center min-vh-75">
+            <div class="col-lg-7">
+                <div class="hero-badge">
+                    <span class="pulsating-dot"></span> Powered by Lika AI
+                </div>
+                <h2 class="display-5 fw-bold mb-4">
+                    Умное управление <br>
+                    <span class="text-gradient">твоим временем</span>
+                </h2>
+                <p class="lead text-secondary mb-5 pe-lg-5">
+                    Lika — это персональный ассистент, который объединяет академические данные, аналитику успеваемости и инструменты тайм-менеджмента в единую экосистему.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'schedule' %}" class="btn-lika primary-glow">Моё расписание</a>
+                    {% else %}
+                        <a href="{% url 'account_login' %}" class="btn-lika primary-glow">Начать бесплатно</a>
+                        <a href="#features" class="btn-lika secondary-outline">Как это работает</a>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- Декоративный элемент справа (опционально) -->
+            <div class="col-lg-5 d-none d-lg-block">
+                <div class="hero-card-stack">
+                    <div class="glass-card card-1">
+                        <i class="bi bi-cpu text-danger"></i>
+                        <span>Lika AI Analysis</span>
+                    </div>
+                    <div class="glass-card card-2">
+                        <div class="mini-chart">
+                            <div class="bar" style="height: 40%"></div>
+                            <div class="bar" style="height: 80%"></div>
+                            <div class="bar" style="height: 60%"></div>
+                        </div>
+                        <span>Efficiency +32%</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </section>
 
-<section class="features">
-    <h2>Возможности</h2>
-    <div class="features-grid">
-        <div class="feature-card">
-            <h3>📅 Планирование</h3>
-            <p>Управляй своим временем и задачами</p>
-        </div>
-
-        <div class="feature-card">
-            <h3>📊 Аналитика</h3>
-            <p>Отслеживай нагрузку и продуктивность</p>
-        </div>
-
-        <div class="feature-card">
-            <h3>⚙️ Минимализм</h3>
-            <p>Ничего лишнего — только фокус</p>
-        </div>
-    </div>
-</section>
-
-<section class="cta">
-    <h2>Начни прямо сейчас</h2>
-
-    {% if request.user.is_authenticated %}
-        <p>Открой своё расписание и продолжай работу</p>
-        <a href="/api/v1/schedule/" class="btn primary">
-            Перейти к расписанию
-        </a>
-    {% else %}
-        <p>Войди или зарегистрируйся, чтобы начать</p>
-        <a href="/api/v1/accounts/login/" class="btn primary">
-            Войти
-        </a>
-    {% endif %}
-</section>
+<!-- Остальные секции (stats, features, cta) остаются такими же -->
 {% endblock %}

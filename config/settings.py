@@ -17,6 +17,11 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS').split(",")
 # Application definition
 SITE_ID = 2
 INSTALLED_APPS = [
+    # my_apps
+    'account.apps.AccountConfig',
+    'schedule',
+    'core',
+
     'django.contrib.sites',
 
     'allauth',
@@ -34,9 +39,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'dj_rest_auth',
-    # my_apps
-    'schedule',
-    'core',
 ]
 
 AUTHENTICATION_BACKENDS = (

@@ -1,62 +1,55 @@
-from dj_rest_auth.views import LogoutView
-from rest_framework import permissions, generics
-from . import serializers
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.models import User
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from account.forms import OnboardingForm
+from django.contrib import messages
+from .models import EmailVerificationCode
 
 
-# Now we need to create view, that registers the user
-class UserRegisterView(generics.CreateAPIView):
-    serializer_class = serializers.UserRegisterSerializer
+@login_required
+def complete_profile(request):
+    if request.method == 'POST':
+        form = OnboardingForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = OnboardingForm(instance=request.user)
+    return render(request, 'account/complete_profile.html', {'form': form})
 
-# Это кастомизатор для модуля logout. Мы просто устанавливаем пермишенсы
-class CustomLogoutView(LogoutView):
-    permission_classes = (permissions.IsAuthenticated,)
-#
-# class UserProfileView(generics.RetrieveAPIView):
-#     serializer_class = serializers.UserDetailSerializer
-#     permission_classes = [permissions.IsAuthenticated,]
-#
-#     def get(self, request, *args, **kwargs):
-#         user_pk = kwargs.get('pk')
-#         if user_pk:
-#             user = get_object_or_404(User, pk=user_pk)
-#             detail_user = DetailUser.objects.filter(user=user).first()
-#             tasks = Task.objects.filter(owner=user)  # исправлено
-#
-#             return render(request, 'core/profile/detail_user.html', {
-#                 'detail_user': detail_user,
-#                 'tasks': tasks,
-#             })
-#         else:
-#             user = request.user
-#
-#             detail_user = DetailUser.objects.filter(user=user).first()
-#             tasks = Task.objects.filter(owner=request.user)
-#
-#             return render(request, 'core/profile/profile.html', {
-#                 'detail_user': detail_user,
-#                 'tasks': tasks,
-#             })
 
-#
-# def add_info(request):
-#     if request.method == 'POST':
-#         data = request.POST.copy()
-#         data['user'] = request.user.id  # Указываем ID пользователя вручную
-#
-#         serializer = serializers.DetailUserSerializer(data=data)
-#         if serializer.is_valid():
-#             serializer.save(user=request.user)
-#             return redirect('frontpage')  # ⬅ должно быть именно redirect!
-#
-#         else:
-#             return render(request, 'core/profile/add_info.html', {
-#                 'errors': serializer.errors,
-#                 'form_data': request.POST
-#             })
-#
-#     if hasattr(request.user, 'detailuser'):
-#         return redirect('frontpage')
-#
-#     return render(request, 'core/profile/add_info.html')
+from allauth.account.models import EmailAddress
+
+from django.contrib.auth import login
+from .models import EmailVerificationCode
+from allauth.account.models import EmailAddress
+
+
+def verify_code_view(request):
+    if request.method == 'POST':
+        input_code = request.POST.get('code')
+        try:
+            verification = EmailVerificationCode.objects.get(code=input_code)
+
+            if verification.is_valid():
+                user = verification.user
+
+                email_obj, created = EmailAddress.objects.get_or_create(
+                    user=user,
+                    email=user.email
+                )
+                email_obj.verified = True
+                email_obj.save()
+
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+
+                verification.delete()
+
+                messages.success(request, "Почта подтверждена, добро пожаловать!")
+                return redirect('/')
+            else:
+                messages.error(request, "Код просрочен.")
+
+        except EmailVerificationCode.DoesNotExist:
+            messages.error(request, "Неверный код подтверждения.")
+
+    return render(request, 'account/email_confirm.html')
