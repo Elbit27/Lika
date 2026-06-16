@@ -13,6 +13,8 @@ DEBUG = config('DEBUG')
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS').split(",")
 
+TELEGRAM_BOT_TOKEN = config('TELEGRAM_BOT_TOKEN')
+
 
 # Application definition
 SITE_ID = 2

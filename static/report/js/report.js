@@ -1,9 +1,15 @@
 document.addEventListener("DOMContentLoaded", async () => {
+    // Элементы управления графиком
     const canvas = document.getElementById("reportChart");
     const weekLabel = document.querySelector(".week-switch span");
     const prevBtn = document.getElementById("prevWeek");
     const nextBtn = document.getElementById("nextWeek");
     const periodBtns = document.querySelectorAll(".period-btn");
+
+    // Элементы вкладок и таблицы
+    const tabs = document.querySelectorAll(".tab");
+    const tabContents = document.querySelectorAll(".tab-content");
+    const detailTableBody = document.getElementById("detail-table-body");
 
     if (!canvas || !weekLabel || !prevBtn || !nextBtn) return;
 
@@ -12,7 +18,36 @@ document.addEventListener("DOMContentLoaded", async () => {
     let currentPeriod = "week";
     let offset = 0;
 
-    // Вспомогательная функция для красивого формата дат
+    // --- ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК ---
+
+    tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+            const target = tab.dataset.target;
+
+            // Визуальное переключение активной вкладки
+            tabs.forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
+
+            // Переключение видимости контента
+            tabContents.forEach(content => {
+                if (content.id === target) {
+                    content.classList.remove("d-none");
+                } else {
+                    content.classList.add("d-none");
+                }
+            });
+
+            // Если выбрали детали, грузим таблицу
+            if (target === "detail-section") {
+                fetchDetailData();
+            } else {
+                updateChart(); // Обновляем график при возврате на Summary
+            }
+        });
+    });
+
+    // --- ФУНКЦИИ ДЛЯ SUMMARY (ГРАФИК) ---
+
     function formatDate(date) {
         return date.toLocaleDateString("ru-RU", { day: "2-digit", month: "short" });
     }
@@ -36,9 +71,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             data: {
                 labels: labels,
                 datasets: [{
-                    label: "Завершенные Pomodoro",
+                    label: "Концентрация Pomodoro",
                     data: values,
-                    backgroundColor: "rgba(155, 17, 30, 0.4)", // Твой акцентный красный с прозрачностью
+                    backgroundColor: "rgba(155, 17, 30, 0.4)",
                     borderColor: "rgba(155, 17, 30, 1)",
                     borderWidth: 2,
                     borderRadius: 6
@@ -71,7 +106,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         if (currentPeriod === "week") {
             startDate = new Date(today);
-            // Находим понедельник текущей недели с учетом смещения
             const dayDiff = today.getDay() === 0 ? 6 : today.getDay() - 1;
             startDate.setDate(today.getDate() - dayDiff + (offset * 7));
 
@@ -82,8 +116,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
         else if (currentPeriod === "month") {
             startDate = new Date(today.getFullYear(), today.getMonth() + offset, 1);
-            endDate = new Date(today.getFullYear(), today.getMonth() + offset + 1, 0);
-
             const monthName = startDate.toLocaleString('ru-RU', { month: 'long', year: 'numeric' });
             weekLabel.textContent = monthName.charAt(0).toUpperCase() + monthName.slice(1);
         }
@@ -92,7 +124,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             weekLabel.textContent = `${targetYear} год`;
         }
 
-        // Блокируем кнопку "вперед", если мы в текущем периоде
         nextBtn.disabled = offset >= 0;
     }
 
@@ -102,7 +133,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         let values = [];
 
         if (currentPeriod === "week") {
-            // Бэкенд возвращает [{day: 'Mon', count: 5}, ...]
             labels = data.map(d => d.day);
             values = data.map(d => d.count);
         }
@@ -132,19 +162,63 @@ document.addEventListener("DOMContentLoaded", async () => {
         updatePeriodLabel();
     }
 
-    // Слушатели для переключения периодов (Неделя/Месяц/Год)
+    // --- ФУНКЦИИ ДЛЯ DETAIL (ТАБЛИЦА) ---
+
+    async function fetchDetailData() {
+        try {
+            const res = await fetch('/report/report_detail/');
+            if (!res.ok) throw new Error("Ошибка загрузки");
+
+            const data = await res.json();
+
+            // Очищаем таблицу перед отрисовкой
+            detailTableBody.innerHTML = "";
+
+            if (data.length === 0) {
+                detailTableBody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">Данных пока нет</td></tr>`;
+                return;
+            }
+
+            data.forEach(item => {
+                const row = `
+                    <tr>
+                        <td>
+                            <div class="fw-bold">${item.date_display}</div>
+                            <div class="text-muted small">${item.time_display}</div>
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary-subtle text-dark me-2">${item.task_label}</span>
+                            <span class="fw-bold">${item.item_name}</span>
+                        </td>
+                        <td class="">${item.duration} min</td>
+                        <td>
+                            <button class="btn btn-link text-muted p-0">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                detailTableBody.insertAdjacentHTML("beforeend", row);
+            });
+        } catch (err) {
+            console.error("Ошибка:", err);
+            detailTableBody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">Не удалось загрузить данные</td></tr>`;
+        }
+    }
+
+    // --- ОБРАБОТЧИКИ СОБЫТИЙ ---
+
     periodBtns.forEach(btn => {
         btn.addEventListener("click", () => {
             periodBtns.forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
 
             currentPeriod = btn.dataset.period;
-            offset = 0; // Сбрасываем смещение при смене периода
+            offset = 0;
             updateChart();
         });
     });
 
-    // Навигация (Назад/Вперед)
     prevBtn.addEventListener("click", () => {
         offset -= 1;
         updateChart();
@@ -157,6 +231,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
-    // Инициализация при загрузке
+    // Инициализация при первой загрузке
     updateChart();
 });

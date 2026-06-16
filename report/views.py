@@ -62,3 +62,21 @@ def report_data(request):
         result = list(queryset)
 
     return Response(result)
+
+
+@api_view(['GET'])
+def report_detail(request):
+    # Добавляем select_related, чтобы избежать проблемы N+1 запросов
+    pomas = Poma.objects.select_related('item').all().order_by('-created_at')
+
+    result = []
+    for p in pomas:
+        result.append({
+            "id": p.id,
+            "date_display": p.created_at.strftime('%d %b %Y'),
+            "time_display": p.created_at.strftime('%H:%M'),
+            "item_name": p.item.name,  # Теперь это сработает быстро
+            "task_label": "Lika",
+            "duration": 60
+        })
+    return Response(result)

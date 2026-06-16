@@ -7,3 +7,4 @@ dj-rest-auth
 drf-yasg
 django-filter
 gunicorn
+telebot
