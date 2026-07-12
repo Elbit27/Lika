@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if goal %}Редактировать цель{% else %}Создать цель{% endif %}</title>
+    <link rel="stylesheet" href="/static/goal/css/goal.css"> <!-- Измени путь, если нужно -->
+</head>
+<body>
+
+    <div class="container">
+        <h1>{% if goal %}Редактировать цель{% else %}Создать новую цель{% endif %}</h1>
+
+        <form id="goal-form">
+            <!-- Скрытый ID на случай редактирования -->
+            <input type="hidden" id="goal-id" value="{{ goal.id|default:'' }}">
+
+            <!-- Поля Цели -->
+            <div class="form-group">
+                <label for="title">Название цели</label>
+                <input type="text" id="title" value="{{ goal.title|default:'' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Описание</label>
+                <textarea id="description" rows="3">{{ goal.description|default:'' }}</textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="card_color">Цвет карточки</label>
+                    <select id="card_color">
+                        <option value="white" {% if goal.card_color == 'white' %}selected{% endif %}>Белый</option>
+                        <option value="blue" {% if goal.card_color == 'blue' %}selected{% endif %}>Синий</option>
+                        <option value="green" {% if goal.card_color == 'green' %}selected{% endif %}>Зеленый</option>
+                        <option value="amber" {% if goal.card_color == 'amber' %}selected{% endif %}>Янтарный</option>
+                        <option value="purple" {% if goal.card_color == 'purple' %}selected{% endif %}>Пурпурный</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="prize">Приз / Награда</label>
+                    <input type="text" id="prize" value="{{ goal.prize|default:'' }}">
+                </div>
+            </div>
+
+            <!-- Секция Шагов -->
+            <h2>Шаги цели</h2>
+            <div id="steps-container">
+                <!-- Если бэк передал существующую цель, рендерим её шаги -->
+                {% if goal %}
+                    {% for step in goal.steps.all %}
+                        <div class="step-card" data-step-id="{{ step.id }}">
+                            <div class="step-header">
+                                <h3>Шаг</h3>
+                                <button type="button" class="btn-delete" onclick="this.closest('.step-card').remove()">Удалить</button>
+                            </div>
+                            <div class="form-group">
+                                <label>Название шага</label>
+                                <input type="text" class="step-title" value="{{ step.title }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Описание шага</label>
+                                <textarea class="step-description" rows="2">{{ step.description }}</textarea>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Цвет</label>
+                                    <input type="color" class="step-color" value="{{ step.card_color|default:'#e0e0e0' }}">
+                                </div>
+                                <div class="form-group">
+                                    <label>Награда за шаг</label>
+                                    <input type="text" class="step-prize" value="{{ step.prize }}">
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <button type="button" id="add-step-btn" class="btn-secondary">+ Добавить шаг</button>
+            <button type="submit" class="btn-primary">Сохранить цель</button>
+        </form>
+    </div>
+
+    <!-- Передаем CSRF-токен в JS ( Django стандарт ) -->
+    <script>
+        const CSRF_TOKEN = "{{ csrf_token }}";
+    </script>
+    <script src="/static/goal/js/CreateUpdateGoal.js"></script> <!-- Измени путь, если нужно -->
+</body>
+</html>

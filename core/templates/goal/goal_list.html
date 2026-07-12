@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои Цели</title>
+    <link rel="stylesheet" href="/static/goal/css/goal_list.css"> <!-- Путь к стилям -->
+</head>
+<body>
+
+    <div class="list-container">
+        <div class="list-header">
+            <h1>🎯 Мои цели и задачи</h1>
+            <a href="/goal/create/" class="btn-add-goal">+ Создать цель</a>
+        </div>
+
+        <div class="goals-grid">
+            {% for goal in goals %}
+                <!-- Цвет карточки динамически берется из базы данных -->
+                <div class="goal-card" style="border-top: 6px solid {{ goal.card_color|default:'#4a90e2' }}">
+                    <div class="goal-body">
+                        <span class="goal-badge" style="background-color: {{ goal.card_color|default:'#4a90e2' }}15; color: {{ goal.card_color|default:'#4a90e2' }}">
+                            ⚡ Цель №{{ goal.id }}
+                        </span>
+
+                        <h2 class="goal-title">{{ goal.title }}</h2>
+                        <p class="goal-desc">{{ goal.description|default:"Нет описания" }}</p>
+
+                        {% if goal.prize %}
+                            <div class="goal-prize">
+                                🎁 <strong>Награда:</strong> {{ goal.prize }}
+                            </div>
+                        {% endif %}
+
+                        <!-- Блок шагов внутри цели -->
+                        <div class="goal-steps-section">
+                            <h3>Шаги:</h3>
+                            {% if goal.steps.all %}
+                                <ul class="steps-list">
+                                    {% for step in goal.steps.all %}
+                                        <li class="step-item" style="border-left: 3px solid {{ step.card_color|default:'#2ecc71' }}">
+                                            <div class="step-item-main">
+                                                <span class="step-item-title">{{ step.title }}</span>
+                                                {% if step.prize %}
+                                                    <span class="step-item-prize">🏆 {{ step.prize }}</span>
+                                                {% endif %}
+                                            </div>
+                                            {% if step.description %}
+                                                <p class="step-item-desc">{{ step.description }}</p>
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="no-steps">Для этой цели еще не добавлено ни одного шага.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Кнопки управления карточкой -->
+                    <div class="goal-footer">
+                        <span class="goal-date">📅 {{ goal.created_at|date:"d.m.Y" }}</span>
+                        <div class="goal-actions">
+                            <a href="/goal/{{ goal.id }}/edit/" class="btn-action-edit">✏️ Редактировать</a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="empty-state">
+                    <h2>У вас пока нет поставленных целей 😕</h2>
+                    <p>Самое время добавить первую и начать двигаться к ней!</p>
+                    <a href="/goal/create/" class="btn-primary" style="display: inline-block; width: auto; padding: 12px 30px;">Добавить цель</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</body>
+</html>

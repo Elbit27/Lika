@@ -18,6 +18,7 @@ urlpatterns = [
     path('accounts/', include(account_patterns)),
     path('schedule/', include('schedule.urls')),
     path('report/', include('report.urls')),
+    path('goal/', include('goal.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:

@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'account.apps.AccountConfig',
     'schedule',
     'core',
+    'goal',
 
     'django.contrib.sites',
 
