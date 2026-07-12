@@ -1,0 +1,9 @@
+Jul 13th
+- rename lika to specter in DB ./
+- update goal card functionality ./
+
+---------------------------------------------
+TODO:
+goal detail
+check step
+improve goal style

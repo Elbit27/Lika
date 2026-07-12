@@ -8,3 +8,6 @@ drf-yasg
 django-filter
 gunicorn
 telebot
+django-allauth
+jwt
+pytest-django

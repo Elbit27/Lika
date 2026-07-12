@@ -1,0 +1,90 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'goal/css/CreateUpdateGoal.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="goal-form-wrapper">
+    <div class="goal-form-container">
+        <form id="goal-form">
+            <input type="hidden" id="goal-id" value="{{ goal.id|default:'' }}">
+
+            <div class="form-group">
+                <label for="title">Название цели</label>
+                <input type="text" id="title" value="{{ goal.title|default:'' }}" placeholder="Например: Выучить Django за 3 месяца" required>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Описание цели</label>
+                <textarea id="description" rows="3" placeholder="Опишите, почему эта цель важна для вас... Explicitly detail your motivation.">{{ goal.description|default:'' }}</textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="card_color">Цветовая метка</label>
+                    <select id="card_color">
+                        <option value="white" {% if goal.card_color == 'white' %}selected{% endif %}>🤍 Белый</option>
+                        <option value="blue" {% if goal.card_color == 'blue' %}selected{% endif %}>💙 Синий</option>
+                        <option value="green" {% if goal.card_color == 'green' %}selected{% endif %}>💚 Зеленый</option>
+                        <option value="amber" {% if goal.card_color == 'amber' %}selected{% endif %}>💛 Янтарный</option>
+                        <option value="purple" {% if goal.card_color == 'purple' %}selected{% endif %}>💜 Пурпурный</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="prize">Главная награда</label>
+                    <input type="text" id="prize" value="{{ goal.prize|default:'' }}" placeholder="Что вы получите в итоге?">
+                </div>
+            </div>
+
+            <div class="steps-section-header">
+                <h2><i class="bi bi-card-checklist"></i> Этапы выполнения (Шаги)</h2>
+                <p class="steps-subtitle">Маленькие шаги ведут к большим результатам</p>
+            </div>
+
+            <div id="steps-container">
+                {% if goal %}
+                    {% for step in goal.steps.all %}
+                        <div class="step-card" data-step-id="{{ step.id }}">
+                            <div class="step-header">
+                                <h3>Шаг выполнения</h3>
+                                <button type="button" class="btn-delete" onclick="this.closest('.step-card').remove()">
+                                    <i class="bi bi-trash3"></i> Удалить
+                                </button>
+                            </div>
+                            <div class="form-group">
+                                <label>Название шага</label>
+                                <input type="text" class="step-title" value="{{ step.title }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Описание шага</label>
+                                <textarea class="step-description" rows="2">{{ step.description }}</textarea>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="form-actions">
+                <button type="button" id="add-step-btn" class="btn-secondary">
+                    <i class="bi bi-plus-lg"></i> Добавить шаг
+                </button>
+                <button type="submit" class="btn-primary">
+                    {% if goal %}
+                        <i class="bi bi-check-all me-2"></i>Сохранить изменения
+                    {% else %}
+                        <i class="bi bi-cloud-upload-fill me-2"></i>Создать карточку
+                    {% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const CSRF_TOKEN = "{{ csrf_token }}";
+</script>
+<script src="/static/goal/js/CreateUpdateGoal.js"></script>
+{% endblock %}

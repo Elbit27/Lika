@@ -10,10 +10,11 @@ def goal_list(request):
 
 def goal_create_page(request, pk=None):
     goal = None
-    if pk:
-        goal = get_object_or_404(Goal.objects.prefetch_related('questions__answers'), pk=pk)
+    return render(request, 'goal/CreateUpdateGoal.html', {'goal': goal})
 
-    return render(request, 'goal/create_goal.html', {'goal': goal})
+def goal_update_page(request, pk=None):
+    goal = get_object_or_404(Goal.objects.prefetch_related('steps'), pk=pk)
+    return render(request, 'goal/CreateUpdateGoal.html', {'goal': goal})
 
 
 class GoalViewSet(viewsets.ModelViewSet):

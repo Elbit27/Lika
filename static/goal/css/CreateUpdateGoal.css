@@ -1,117 +1,209 @@
 :root {
-    --primary-color: #4a90e2;
-    --secondary-color: #2ecc71;
-    --danger-color: #e74c3c;
-    --background: #f5f7fa;
-    --card-bg: #ffffff;
-    --text-color: #2c3e50;
-    --border-color: #dcdde1;
+    --primary-color: #4f46e5;
+    --primary-hover: #4338ca;
+    --bg-gradient: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    --card-background: #ffffff;
+    --text-main: #1f2937;
+    --text-muted: #6b7280;
+    --border-color: #e5e7eb;
+    --border-focus: #a5b4fc;
+    --danger-color: #ef4444;
+    --danger-hover: #dc2626;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+    --shadow-md: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.05);
 }
 
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--background);
-    color: var(--text-color);
-    margin: 0;
-    padding: 20px;
+.goal-form-wrapper {
+    min-height: 100vh;
+    padding: 40px 20px;
+    box-sizing: border-box;
 }
 
-.container {
-    max-width: 650px;
+.goal-form-container {
+    max-width: 700px;
     margin: 0 auto;
-    background: var(--card-bg);
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    background: var(--card-background);
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
 }
 
-h1, h2 {
-    margin-top: 0;
-    border-bottom: 2px solid var(--background);
-    padding-bottom: 10px;
+
+.form-subtitle {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin: 0;
 }
 
-h2 { margin-top: 30px; font-size: 1.4rem; }
+.steps-section-header {
+    margin-top: 40px;
+    margin-bottom: 20px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 30px;
+}
 
+.steps-section-header h2 {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin: 0 0 4px 0;
+}
+
+.steps-subtitle {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+/* Элементы форм */
 .form-group {
-    margin-bottom: 18px;
+    margin-bottom: 20px;
     display: flex;
     flex-direction: column;
 }
 
-label {
-    font-weight: 600;
-    margin-bottom: 6px;
-    font-size: 0.9rem;
-}
-
-input[type="text"], textarea, input[type="color"] {
-    padding: 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    font-size: 1rem;
-    box-sizing: border-box;
-    width: 100%;
-}
-
-input[type="color"] {
-    height: 42px;
-    padding: 2px;
-    cursor: pointer;
-}
-
 .form-row {
     display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 15px;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
 }
 
-.step-card {
-    background: var(--background);
-    padding: 20px;
+label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+input[type="text"],
+textarea,
+select {
+    font-family: inherit;
+    padding: 12px 16px;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
-    margin-bottom: 15px;
-    border-left: 5px solid var(--primary-color);
-    position: relative;
+    font-size: 0.95rem;
+    color: var(--text-main);
+    background-color: #f9fafb;
+    box-sizing: border-box;
+    width: 100%;
+    transition: all 0.2s ease;
+}
+
+input[type="text"]:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    background-color: #fff;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px var(--border-focus);
+}
+
+textarea {
+    resize: vertical;
+}
+
+/* Карточки шагов */
+.step-card {
+    background: #f9fafb;
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--primary-color);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 16px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .step-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 16px;
 }
 
-.step-header h3 { margin: 0; font-size: 1.1rem; }
-
-button {
-    padding: 12px 20px;
-    border: none;
-    border-radius: 6px;
+.step-header h3 {
+    margin: 0;
     font-size: 1rem;
-    font-weight: bold;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+/* Кнопки */
+.form-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 32px;
+}
+
+button, .btn-primary, .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 24px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.15s ease;
 }
 
 .btn-primary {
     background-color: var(--primary-color);
-    color: white;
-    width: 100%;
-    margin-top: 20px;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
 }
 
 .btn-secondary {
-    background-color: #ecf0f1;
-    color: var(--text-color);
-    width: 100%;
+    background-color: #f3f4f6;
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background-color: #e5e7eb;
 }
 
 .btn-delete {
-    background-color: transparent;
-    color: var(--danger-color);
-    padding: 5px 10px;
-    font-size: 0.9rem;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.15s ease;
 }
 
-button:hover { opacity: 0.9; }
+.btn-delete:hover {
+    color: var(--danger-color);
+    background-color: #fee2e2;
+}
+
+/* Адаптивность для мобильных телефонов */
+@media (max-width: 600px) {
+    .container {
+        padding: 24px;
+    }
+    .form-row, .form-actions {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}

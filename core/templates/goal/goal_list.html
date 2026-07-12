@@ -1,11 +1,12 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мои Цели</title>
-    <link rel="stylesheet" href="/static/goal/css/goal_list.css"> <!-- Путь к стилям -->
-</head>
+{% extends 'core/base.html' %}
+{% load static dict_extras %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'goal/css/goal_list.css' %}">
+{% endblock %}
+
+{% block content %}
 <body>
 
     <div class="list-container">
@@ -76,4 +77,4 @@
     </div>
 
 </body>
-</html>
+{% endblock %}

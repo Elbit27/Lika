@@ -3,23 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const addStepBtn = document.getElementById('add-step-btn');
     const goalForm = document.getElementById('goal-form');
 
-    // Функция для безопасного получения CSRF-токена из куки Django
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
-    // Функция генерации HTML-разметки для нового шага цели
     function createStepHTML() {
         const stepDiv = document.createElement('div');
         stepDiv.className = 'step-card';
@@ -40,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return stepDiv;
     }
 
-    // Слушатель клика на кнопку добавления нового шага
+    // adding new step listener
     if (addStepBtn) {
         addStepBtn.addEventListener('click', () => {
             if (stepsContainer) {
@@ -49,16 +32,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Обработка отправки формы создания / редактирования цели
     if (goalForm) {
         goalForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // Проверяем наличие ID (если редактируем существующую цель)
             const goalIdElement = document.getElementById('goal-id');
             const goalId = goalIdElement ? goalIdElement.value : '';
 
-            // Сбор данных по всем добавленным карточкам шагов
             const stepsData = [];
             document.querySelectorAll('.step-card').forEach(card => {
                 const titleInput = card.querySelector('.step-title');
@@ -73,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const cardColorElement = document.getElementById('card_color');
-            // Если элемент найден — берем его строку ('white', 'blue' и т.д.), иначе ставим дефолтную 'white'
             const cardColorValue = cardColorElement ? cardColorElement.value : 'white';
 
             const payload = {
@@ -81,49 +60,87 @@ document.addEventListener('DOMContentLoaded', () => {
                 description: document.getElementById('description').value,
                 card_color: cardColorValue,
                 prize: document.getElementById('prize') ? document.getElementById('prize').value : '',
-                steps: stepsData // Передаем как красивый вложенный массив
+                steps: stepsData
             };
 
             const isEdit = !!goalId;
-            // Конечные эндпоинты в соответствии с вашим urls.py
             const url = !isEdit ? '/goal/api/goals/' : `/goal/api/goals/${goalId}/`;
             const method = isEdit ? 'PUT' : 'POST';
-
-            // Берем CSRF-токен из глобальной переменной Django шаблона или из куки
             const token = typeof CSRF_TOKEN !== 'undefined' ? CSRF_TOKEN : getCookie('csrftoken');
 
             try {
                 const response = await fetch(url, {
                     method: method,
                     headers: {
-                        'Content-Type': 'application/json', // Обязательно для JSONParser на бэке
+                        'Content-Type': 'application/json',
                         'X-CSRFToken': token
                     },
-                    body: JSON.stringify(payload) // Сериализуем объект в JSON-строку
+                    body: JSON.stringify(payload)
                 });
 
                 if (response.ok) {
                     alert(isEdit ? 'Цель успешно обновлена!' : 'Цель успешно создана!');
-                    window.location.href = '/goal/'; // Редирект на список ваших целей
+                    window.location.href = '/goal/';
                 } else {
-                    // Обработка валидационных ошибок бэкенда (400 Bad Request и др.)
                     const contentType = response.headers.get("content-type");
                     if (contentType && contentType.includes("application/json")) {
                         const errorData = await response.json();
                         console.error('Ошибки валидации от DRF:', errorData);
                         alert('Ошибка заполнения полей: ' + JSON.stringify(errorData));
                     } else {
-                        // Защита на случай, если сервер упал в 500 ошибку и выдал HTML
                         const errorHtml = await response.text();
                         console.error('Сервер вернул HTML вместо JSON. Первые 300 символов:\n', errorHtml.substring(0, 300));
                         alert(`Критическая ошибка сервера (${response.status}). Проверьте логи терминала Django.`);
                     }
                 }
             } catch (error) {
-                // Ошибка, если бэкенд вообще отключен или заблокирован по CORS
                 console.error('Сетевая ошибка запроса:', error);
                 alert('Не удалось связаться с сервером. Убедитесь, что Django запущен.');
             }
         });
     }
 });
+
+
+window.deleteGame = async function(gameId) {
+    if (!confirm("Вы уверены, что хотите удалить эту карточку цели? Это действие необратимо.")) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/game/${gameId}/`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            alert("Карточка цели успешно удалена");
+            window.location.href = '/goal/';
+        } else {
+            const data = await response.json();
+            alert("Ошибка при удалении: " + (data.error || "Неизвестная ошибка"));
+        }
+    } catch (e) {
+        console.error("Ошибка запроса:", e);
+        alert("Не удалось связаться с сервером.");
+    }
+};
+
+// getting CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}

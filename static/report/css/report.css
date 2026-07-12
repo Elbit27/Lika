@@ -234,7 +234,7 @@
     border-radius: 0 8px 8px 0;
 }
 
-/* Бейдж для задач (например, "Lika") */
+/* Бейдж для задач (например, "Specter") */
 .badge.bg-secondary-subtle {
     background-color: rgba(155, 17, 30, 0.2) !important; /* Полупрозрачный красный под твой стиль */
     color: #ff4d4d !important;

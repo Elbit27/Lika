@@ -76,7 +76,7 @@ def report_detail(request):
             "date_display": p.created_at.strftime('%d %b %Y'),
             "time_display": p.created_at.strftime('%H:%M'),
             "item_name": p.item.name,  # Теперь это сработает быстро
-            "task_label": "Lika",
+            "task_label": "Specter",
             "duration": 60
         })
     return Response(result)

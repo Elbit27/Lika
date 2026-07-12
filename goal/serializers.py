@@ -1,4 +1,3 @@
-import json
 from rest_framework import serializers
 from .models import Goal, Step
 
@@ -31,3 +30,24 @@ class GoalSerializer(serializers.ModelSerializer):
             )
 
         return goal
+
+    def update(self, instance, validated_data):
+        steps_data = validated_data.pop('steps', [])
+
+        instance.title = validated_data.get('title', instance.title)
+        instance.description = validated_data.get('description', instance.description)
+        instance.card_color = validated_data.get('card_color', instance.card_color)
+        instance.prize = validated_data.get('prize', instance.prize)
+        instance.save()
+
+        # 3. Перезаписываем шаги (твоя отличная рабочая логика)
+        instance.steps.all().delete()
+
+        for s_data in steps_data:
+            Step.objects.create(
+                goal=instance,
+                title=s_data['title'],
+                description=s_data.get('description', '')
+            )
+
+        return instance
