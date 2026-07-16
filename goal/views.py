@@ -1,7 +1,7 @@
 from goal import serializers
 from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets
-from goal.models import Goal
+from goal.models import Goal, Step
 
 
 def goal_list(request):
@@ -15,6 +15,12 @@ def goal_create_page(request, pk=None):
 def goal_update_page(request, pk=None):
     goal = get_object_or_404(Goal.objects.prefetch_related('steps'), pk=pk)
     return render(request, 'goal/CreateUpdateGoal.html', {'goal': goal})
+
+
+
+class StepViewSet(viewsets.ModelViewSet):
+    queryset = Step.objects.all()
+    serializer_class = serializers.StepSerializer
 
 
 class GoalViewSet(viewsets.ModelViewSet):

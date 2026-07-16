@@ -27,31 +27,33 @@
                         <h2 class="goal-title">{{ goal.title }}</h2>
                         <p class="goal-desc">{{ goal.description|default:"Нет описания" }}</p>
 
-                        {% if goal.prize %}
-                            <div class="goal-prize">
-                                🎁 <strong>Награда:</strong> {{ goal.prize }}
-                            </div>
-                        {% endif %}
-
                         <!-- Блок шагов внутри цели -->
                         <div class="goal-steps-section">
-                            <h3>Шаги:</h3>
-                            {% if goal.steps.all %}
+                            {% if goal.uncompleted_steps %}
                                 <ul class="steps-list">
-                                    {% for step in goal.steps.all %}
-                                        <li class="step-item" style="border-left: 3px solid {{ step.card_color|default:'#2ecc71' }}">
+                                    {% for step in goal.uncompleted_steps|slice:":2" %}
+                                        <li class="step-item {% if step.is_completed %}completed{% endif %}" data-step-id="{{ step.id }}">
                                             <div class="step-item-main">
                                                 <span class="step-item-title">{{ step.title }}</span>
-                                                {% if step.prize %}
-                                                    <span class="step-item-prize">🏆 {{ step.prize }}</span>
-                                                {% endif %}
+
+                                                <div class="step-actions-inline">
+                                                    <!-- Кнопка "Сделано" (Чекбокс/Галочка) -->
+                                                    <button type="button" class="btn-step-action btn-step-complete" title="Отметить выполненным">
+                                                        <i class="bi {% if step.is_completed %}bi-check-circle-fill{% else %}bi-circle{% endif %}"></i>
+                                                    </button>
+                                                    <button type="button" class="btn-step-action btn-step-edit" title="Редактировать">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </button>
+                                                </div>
                                             </div>
-                                            {% if step.description %}
-                                                <p class="step-item-desc">{{ step.description }}</p>
-                                            {% endif %}
                                         </li>
+
                                     {% endfor %}
                                 </ul>
+                                {% if goal.uncompleted_steps|length > 2 %}
+                                    <div class="steps-more-dots" style="padding-left: 10px; font-weight: bold; color: #888; letter-spacing: 2px;">...</div>
+                                {% endif %}
+
                             {% else %}
                                 <p class="no-steps">Для этой цели еще не добавлено ни одного шага.</p>
                             {% endif %}
@@ -62,19 +64,53 @@
                     <div class="goal-footer">
                         <span class="goal-date">📅 {{ goal.created_at|date:"d.m.Y" }}</span>
                         <div class="goal-actions">
-                            <a href="/goal/{{ goal.id }}/edit/" class="btn-action-edit">✏️ Редактировать</a>
+                            <a href="/goal/{{ goal.id }}/edit/" class="btn-action-edit">Edit</a>
                         </div>
                     </div>
                 </div>
             {% empty %}
                 <div class="empty-state">
-                    <h2>У вас пока нет поставленных целей 😕</h2>
-                    <p>Самое время добавить первую и начать двигаться к ней!</p>
-                    <a href="/goal/create/" class="btn-primary" style="display: inline-block; width: auto; padding: 12px 30px;">Добавить цель</a>
+                    <h2>You don't have any goals set yet.</h2>
+                    <p>It's time to add the first one and start moving towards it!</p>
+                    <a href="/goal/create/" class="btn-primary" style="display: inline-block; width: auto; padding: 12px 30px;">Add goal</a>
                 </div>
             {% endfor %}
         </div>
     </div>
 
+    <div id="goal-modal" class="modal-overlay">
+        <div class="modal-window">
+            <div class="modal-header">
+                <h2 id="modal-title">Название цели</h2>
+                <button class="modal-close-btn" id="close-modal-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="modal-desc" class="modal-goal-desc"></p>
+
+                <div id="modal-prize-wrapper" class="modal-prize-box">
+                    <strong>Награда:</strong> <span id="modal-prize"></span>
+                </div>
+
+                <ul id="modal-steps-uncompleted" class="modal-steps-uncompleted"></ul>
+
+
+                <div class="modal-steps-section">
+                    <h3>Все шаги:</h3>
+                    <ul id="modal-steps-completed" class="modal-steps-completed">
+
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </body>
+
+<script>
+    const CSRF_TOKEN = "{{ csrf_token }}";
+</script>
+<script src="/static/goal/js/GoalListDetail.js"></script>
+
 {% endblock %}

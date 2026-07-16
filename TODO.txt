@@ -3,7 +3,17 @@ Jul 13th
 - update goal card functionality ./
 
 ---------------------------------------------
+
+Jul 14
+- improve goal style ./
+- goal detail ./
+- check step ./
+
+---------------------------------------------
+
+
 TODO:
-goal detail
-check step
-improve goal style
+improve goal card detail
+add progress bar to each card
+fix time inconsistency bug in schedule and report pages
+

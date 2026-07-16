@@ -35,7 +35,6 @@
     opacity: 0.9;
 }
 
-/* Сетка карточек */
 .goals-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -43,7 +42,6 @@
     align-items: start;
 }
 
-/* Карточка цели */
 .goal-card {
     background: var(--card-bg);
     border-radius: 12px;
@@ -88,16 +86,12 @@
     line-height: 1.4;
 }
 
-.goal-prize {
-    background-color: #f1f2f6;
-    padding: 10px 14px;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    margin-bottom: 20px;
-    border-left: 4px solid #f1c40f;
+.goal-steps-section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* Внутренние Шаги в карточке */
 .goal-steps-section h3 {
     font-size: 1rem;
     margin: 0 0 10px 0;
@@ -106,11 +100,120 @@
 
 .steps-list {
     list-style: none;
-    padding: 0;
+    padding-left: 0;
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
+}
+
+.list-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.list-header h1 {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin: 0;
+}
+
+.btn-add-goal {
+    background-color: var(--secondary-color);
+    color: white;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 0.95rem;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+.btn-add-goal:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+.goals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 25px;
+    align-items: start;
+}
+
+.goal-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.goal-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.goal-body {
+    padding: 20px;
+}
+
+.goal-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.goal-title {
+    margin: 0 0 10px 0;
+    font-size: 1.35rem;
+    color: var(--text-color);
+}
+
+.goal-desc {
+    font-size: 0.95rem;
+    color: #7f8c8d;
+    margin: 0 0 15px 0;
+    line-height: 1.4;
+}
+
+.goal-steps-section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.goal-steps-section h3 {
+    font-size: 1rem;
+    margin: 0 0 10px 0;
+    color: var(--text-color);
+}
+
+.steps-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .step-item {
@@ -127,23 +230,24 @@
 }
 
 .step-item-title {
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.step-item-prize {
-    font-size: 0.8rem;
-    background: #ffffff;
-    padding: 2px 6px;
-    border-radius: 4px;
-    border: 1px solid var(--border-color);
-    white-space: nowrap;
+    font-weight: 500;
+    font-size: 0.95rem;
 }
 
 .step-item-desc {
     margin: 4px 0 0 0;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     color: #7f8c8d;
+}
+
+.steps-more-dots {
+    padding-left: 0;
+    font-weight: bold;
+    color: #7f8c8d;
+    opacity: 0.6;
+    letter-spacing: 2px;
+    margin-top: 4px;
+    font-size: 1.1rem;
 }
 
 .no-steps {
@@ -153,7 +257,6 @@
     margin: 0;
 }
 
-/* Подвал карточки */
 .goal-footer {
     background-color: #f8f9fa;
     padding: 12px 20px;
@@ -169,7 +272,6 @@
 }
 
 .btn-action-edit {
-    color: var(--primary-color);
     text-decoration: none;
     font-weight: 600;
 }
@@ -178,7 +280,6 @@
     text-decoration: underline;
 }
 
-/* Пустая страница (нет целей) */
 .empty-state {
     grid-column: 1 / -1;
     text-align: center;
@@ -198,7 +299,283 @@
     margin-bottom: 25px;
 }
 
-/* Адаптивность для маленьких экранов */
+@media (max-width: 480px) {
+    .goals-grid {
+        grid-template-columns: 1fr;
+    }
+    .list-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .btn-add-goal {
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+    }
+}
+
+
+.step-item-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.step-item-title {
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.step-item-desc {
+    margin: 4px 0 0 0;
+    font-size: 0.85rem;
+    color: #7f8c8d;
+}
+
+.steps-more-dots {
+    padding-left: 0;
+    font-weight: bold;
+    color: #7f8c8d;
+    opacity: 0.6;
+    letter-spacing: 2px;
+    margin-top: 4px;
+    font-size: 1.1rem;
+}
+
+.no-steps {
+    font-size: 0.85rem;
+    color: #95a5a6;
+    font-style: italic;
+    margin: 0;
+}
+
+.goal-footer {
+    background-color: #f8f9fa;
+    padding: 12px 20px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+.goal-date {
+    color: #95a5a6;
+}
+
+.btn-action-edit {
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.btn-action-edit:hover {
+    text-decoration: underline;
+}
+
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.empty-state h2 {
+    border: none;
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    color: #7f8c8d;
+    margin-bottom: 25px;
+}
+
+
+/* Задний фон модального окна (затемнение и размытие) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+/* Класс для отображения окна */
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Само белое окно */
+.modal-window {
+    background: #ffffff;
+    width: 90%;
+    max-width: 550px;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    transform: translateY(-20px);
+    transition: transform 0.2s ease;
+}
+
+.modal-overlay.active .modal-window {
+    transform: translateY(0);
+}
+
+/* Шапка окна */
+.modal-header {
+    background: #f8f9fa;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: #333;
+}
+
+/* Кнопка закрытия (крестик) */
+.modal-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    line-height: 1;
+    cursor: pointer;
+    color: #999;
+    transition: color 0.2s;
+}
+
+.modal-close-btn:hover {
+    color: #333;
+}
+
+/* Содержимое окна */
+.modal-body {
+    padding: 20px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.modal-goal-desc {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.modal-prize-box {
+    background: #fff9db;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border-left: 4px solid #fcc419;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+    color: #1b1b1b
+}
+
+.modal-steps-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal-step-item {
+    background: #f1f3f5;
+    padding: 10px 14px;
+    border-radius: 6px;
+    border-left: 3px solid #22b8cf;
+}
+
+.modal-step-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.modal-step-desc {
+    margin: 4px 0 0 0;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+
+.step-item-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
+.step-actions-inline {
+    display: flex;
+    gap: 6px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.step-item:hover .step-actions-inline {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.btn-step-action {
+    background: transparent;
+    border: none;
+    color: #7f8c8d;
+    padding: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-step-action:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.btn-step-complete:hover {
+    color: #2ecc71;
+}
+
+.btn-step-edit:hover {
+    color: #2980b9;
+}
+
+/* Стили для зачеркивания текста при выполнении */
+.step-item.completed .step-item-title {
+    text-decoration: line-through;
+    opacity: 0.5;
+}
+
+.step-item.completed .btn-step-complete {
+    color: #2ecc71;
+}
+
+
+
 @media (max-width: 480px) {
     .goals-grid {
         grid-template-columns: 1fr;

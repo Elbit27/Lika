@@ -17,6 +17,13 @@ class Goal(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    @property
+    def uncompleted_steps(self):
+        return [step for step in self.steps.all() if not step.completed]
+
+    @property
+    def completed_steps(self):
+        return [step for step in self.steps.all() if step.completed]
 
     def __str__(self):
         return self.title
@@ -34,7 +41,6 @@ class Step(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
 
     def __str__(self):
         return f"{self.title} ({self.goal.title})"
