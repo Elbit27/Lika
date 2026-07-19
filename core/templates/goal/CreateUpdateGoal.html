@@ -47,9 +47,9 @@
             <div id="steps-container">
                 {% if goal %}
                     {% for step in goal.steps.all %}
-                        <div class="step-card" data-step-id="{{ step.id }}">
+                        <div class="step-card" data-step-id="{{ step.id }}" data-completed="{{ step.completed|yesno:'true,false' }}">
                             <div class="step-header">
-                                <h3>Шаг выполнения</h3>
+                                <h3>Шаг цели</h3>
                                 <button type="button" class="btn-delete" onclick="this.closest('.step-card').remove()">
                                     <i class="bi bi-trash3"></i> Удалить
                                 </button>

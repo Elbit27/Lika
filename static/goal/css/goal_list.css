@@ -267,6 +267,16 @@
     font-size: 0.85rem;
 }
 
+.detail-goal-footer {
+    background-color: #f8f9fa;
+    padding: 12px 20px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
 .goal-date {
     color: #95a5a6;
 }
@@ -466,7 +476,7 @@
 
 /* Содержимое окна */
 .modal-body {
-    padding: 20px;
+    padding: 10px;
     max-height: 70vh;
     overflow-y: auto;
 }
@@ -515,6 +525,61 @@
     font-size: 0.85rem;
     color: #666;
 }
+
+/* Кнопка раскрытия завершенных шагов */
+.btn-toggle-completed {
+    width: 100%;
+    background: #f1f3f5;
+    border: 1px solid #e9ecef;
+    padding: 10px 14px;
+    border-radius: 6px;
+    text-align: left;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #495057;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    transition: background-color 0.2s;
+}
+
+.btn-toggle-completed:hover {
+    background: #e9ecef;
+}
+
+/* Поворот стрелочки при открытии */
+.btn-toggle-completed .toggle-icon {
+    display: inline-block;
+    transition: transform 0.2s ease;
+    font-size: 0.75rem;
+}
+
+.btn-toggle-completed.active .toggle-icon {
+    transform: rotate(90deg);
+}
+
+/* Контейнер выполненных шагов: изначально скрыт */
+.modal-steps-completed {
+    display: none;
+    list-style: none;
+    padding-left: 0;
+    margin: 0 0 20px 0;
+}
+
+/* Показываем список, когда кнопка активна */
+.btn-toggle-completed.active + .modal-steps-completed {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+
+
+
+
+
 
 
 .step-item-main {
@@ -589,4 +654,40 @@
         text-align: center;
         box-sizing: border-box;
     }
+}
+
+
+/*-----------------------------------------progress-bar----------------------------------------*/
+.goal-progress-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    margin-top: -5px;
+}
+
+.progress-bar-rail {
+    flex-grow: 1;
+    background-color: #e9ecef;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    /* ИСПРАВЛЕНО: Цвет теперь берется динамически из HTML-переменной карточки */
+    background-color: var(--progress-color);
+    width: 0%;
+    border-radius: 4px;
+    transition: width 0.3s ease-in-out;
+}
+
+.progress-percentage-text {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #495057;
+    min-width: 35px;
+    text-align: right;
 }

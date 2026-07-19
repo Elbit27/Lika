@@ -2,6 +2,8 @@ from rest_framework import serializers
 from .models import Goal, Step
 
 class StepSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False, allow_null=True)
+
     class Meta:
         model = Step
         fields = '__all__'
@@ -19,14 +21,18 @@ class GoalSerializer(serializers.ModelSerializer):
         steps_data = validated_data.pop('steps', [])
 
         goal = Goal.objects.create(
-            title=validated_data.get('title', 'Новая карточка'),
+            title=validated_data.get('title', 'Новая цель'),
+            description=validated_data.get('description', ''),
+            card_color=validated_data.get('card_color', 'white'),
+            prize=validated_data.get('prize', '')
         )
 
-        for index, step_data in enumerate(steps_data):
-            step = Step.objects.create(
+        for step_data in steps_data:
+            Step.objects.create(
                 goal=goal,
-                title=step_data['title'],
-                description=step_data['description'],
+                title=step_data.get('title'),
+                description=step_data.get('description', ''),
+                completed=step_data.get('completed', False)
             )
 
         return goal
@@ -40,14 +46,26 @@ class GoalSerializer(serializers.ModelSerializer):
         instance.prize = validated_data.get('prize', instance.prize)
         instance.save()
 
-        # 3. Перезаписываем шаги (твоя отличная рабочая логика)
+        old_statuses = {step.id: step.completed for step in instance.steps.all()}
+
         instance.steps.all().delete()
 
         for s_data in steps_data:
+            raw_id = s_data.get('id')
+            step_id = int(raw_id) if raw_id is not None else None
+
+            is_completed = s_data.get('completed', False)
+            if isinstance(is_completed, str):
+                is_completed = is_completed.lower() == 'true'
+
+            if step_id in old_statuses and old_statuses[step_id] is True:
+                is_completed = True
+
             Step.objects.create(
                 goal=instance,
-                title=s_data['title'],
-                description=s_data.get('description', '')
+                title=s_data.get('title', 'Без названия'),
+                description=s_data.get('description', ''),
+                completed=is_completed
             )
 
         return instance

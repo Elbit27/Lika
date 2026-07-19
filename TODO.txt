@@ -10,10 +10,25 @@ Jul 14
 - check step ./
 
 ---------------------------------------------
+Jul 19
+1. Improve goal card detail ./    -fd/at 22:07-
+    1.1. Collect completed steps into spoiler button ./
+    1.2. Show step's desc after clicking on it ./
+    1.3. Completion status falls down after opening edit page ./
+    1.4. To truncate titles ./
+2. Add progress bar to each card ./    -fd/at 22:55-
+    2.1. To write up progress bar part on templates. HTML ./
+    2.2. The color of progress bar's fillable must be same as card's color. ./
+
+
+# Next time, I'll strive to commit more
+# Sorry!
+---------------------------------------------
 
 
 TODO:
-improve goal card detail
-add progress bar to each card
+required true issues
+may be to add filters, pagination
+add more card_colors or just palette
 fix time inconsistency bug in schedule and report pages
 

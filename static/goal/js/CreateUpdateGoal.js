@@ -43,11 +43,15 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.step-card').forEach(card => {
                 const titleInput = card.querySelector('.step-title');
                 const descInput = card.querySelector('.step-description');
+                const stepId = card.dataset.stepId ? parseInt(card.dataset.stepId) : null;
+                const isCompleted = card.dataset.completed === 'true';
 
                 if (titleInput) {
                     stepsData.push({
+                        id: stepId,
                         title: titleInput.value,
-                        description: descInput ? descInput.value : ''
+                        description: descInput ? descInput.value : '',
+                        completed: isCompleted
                     });
                 }
             });

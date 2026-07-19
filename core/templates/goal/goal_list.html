@@ -11,21 +11,27 @@
 
     <div class="list-container">
         <div class="list-header">
-            <h1>🎯 Мои цели и задачи</h1>
+            <h1>Мои цели</h1>
             <a href="/goal/create/" class="btn-add-goal">+ Создать цель</a>
         </div>
 
         <div class="goals-grid">
             {% for goal in goals %}
-                <!-- Цвет карточки динамически берется из базы данных -->
-                <div class="goal-card" style="border-top: 6px solid {{ goal.card_color|default:'#4a90e2' }}">
+                <div class="goal-card" data-id="{{ goal.id }}" style="border-top: 6px solid {{ goal.card_color|default:'#4a90e2' }}">
                     <div class="goal-body">
-                        <span class="goal-badge" style="background-color: {{ goal.card_color|default:'#4a90e2' }}15; color: {{ goal.card_color|default:'#4a90e2' }}">
-                            ⚡ Цель №{{ goal.id }}
-                        </span>
 
-                        <h2 class="goal-title">{{ goal.title }}</h2>
-                        <p class="goal-desc">{{ goal.description|default:"Нет описания" }}</p>
+                        <h2 class="goal-title">{{ goal.title|truncatechars:20 }}</h2>
+                        <p class="goal-desc">{{ goal.description|default:"Нет описания"|truncatechars:20  }}</p>
+
+                        <div class="goal-progress-container"
+                             style="--progress-color: {{ goal.card_color|default:'#4a90e2' }};"
+                             data-total-steps="{{ goal.steps.count }}"
+                             data-completed-steps="{{ goal.completed_steps|length }}">
+                            <div class="progress-bar-rail">
+                                <div class="progress-bar-fill" style="width: 0%;"></div> <!-- Ширина посчитается в JS при загрузке -->
+                            </div>
+                            <span class="progress-percentage-text">0%</span>
+                        </div>
 
                         <!-- Блок шагов внутри цели -->
                         <div class="goal-steps-section">
@@ -34,15 +40,11 @@
                                     {% for step in goal.uncompleted_steps|slice:":2" %}
                                         <li class="step-item {% if step.is_completed %}completed{% endif %}" data-step-id="{{ step.id }}">
                                             <div class="step-item-main">
-                                                <span class="step-item-title">{{ step.title }}</span>
+                                                <span class="step-item-title">{{ step.title|truncatechars:20 }}</span>
 
                                                 <div class="step-actions-inline">
-                                                    <!-- Кнопка "Сделано" (Чекбокс/Галочка) -->
                                                     <button type="button" class="btn-step-action btn-step-complete" title="Отметить выполненным">
                                                         <i class="bi {% if step.is_completed %}bi-check-circle-fill{% else %}bi-circle{% endif %}"></i>
-                                                    </button>
-                                                    <button type="button" class="btn-step-action btn-step-edit" title="Редактировать">
-                                                        <i class="bi bi-pencil"></i>
                                                     </button>
                                                 </div>
                                             </div>
@@ -59,13 +61,8 @@
                             {% endif %}
                         </div>
                     </div>
-
-                    <!-- Кнопки управления карточкой -->
                     <div class="goal-footer">
-                        <span class="goal-date">📅 {{ goal.created_at|date:"d.m.Y" }}</span>
-                        <div class="goal-actions">
-                            <a href="/goal/{{ goal.id }}/edit/" class="btn-action-edit">Edit</a>
-                        </div>
+                        <span class="goal-date">{{ goal.created_at|date:"d.m.Y" }}</span>
                     </div>
                 </div>
             {% empty %}
@@ -91,21 +88,46 @@
                     <strong>Награда:</strong> <span id="modal-prize"></span>
                 </div>
 
-                <ul id="modal-steps-uncompleted" class="modal-steps-uncompleted"></ul>
-
-
-                <div class="modal-steps-section">
-                    <h3>Все шаги:</h3>
-                    <ul id="modal-steps-completed" class="modal-steps-completed">
-
-                    </ul>
-
+                <div class="modal-completed-section">
+                    <button type="button" id="modal-toggle-completed-btn" class="btn-toggle-completed">
+                        <span class="toggle-icon">▶</span> Показать завершенные шаги (<span id="modal-completed-count">0</span>)
+                    </button>
+                    <!-- Этот контейнер по умолчанию скрыт через CSS -->
+                    <ul id="modal-steps-completed" class="modal-steps-completed"></ul>
+                </div>
+                <div class="modal-steps-list">
+                    <ul id="modal-steps-uncompleted" class="modal-steps-uncompleted"></ul>
+                </div>
+            </div>
+            <div class="detail-goal-footer">
+                <div class="goal-actions">
+                    <a href="#" id="modal-edit-btn" class="btn-action-edit">Edit</a>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Второе модальное окно для детального просмотра шага -->
+    <div id="step-detail-modal" class="modal-overlay" style="z-index: 1100;">
+        <div class="modal-window" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2 id="step-modal-title">Название шага</h2>
+                <button class="modal-close-btn" id="close-step-modal-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="edit-step-id">
 
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="step-modal-desc" style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.85rem; color: #666;">Описание шага:</label>
+                    <textarea id="step-modal-desc" rows="4" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; font-size: 0.95rem; resize: vertical; box-sizing: border-box;" placeholder="Добавьте описание к этому шагу..."></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" id="save-step-desc-btn" class="btn-add-goal" style="padding: 8px 16px; font-size: 0.85rem; background-color: #2ecc71; border: none; cursor: pointer;">Сохранить</button>            </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 <script>
