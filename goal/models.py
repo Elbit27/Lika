@@ -1,17 +1,10 @@
 from django.db import models
 
 class Goal(models.Model):
-    COLOR_CHOICES = [
-        ('white', 'White'),
-        ('blue', 'Blue'),
-        ('green', 'Green'),
-        ('amber', 'Amber'),
-        ('purple', 'Purple'),
-    ]
 
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-    card_color = models.CharField(max_length=20, choices=COLOR_CHOICES, default='white')
+    card_color = models.CharField(max_length=20, default='pink')
     prize = models.CharField(max_length=100, null=False)
 
     created_at = models.DateTimeField(auto_now_add=True)

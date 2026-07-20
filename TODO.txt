@@ -25,18 +25,17 @@ Jul 19
 
 ---------------------------------------------
 Jul 20
-1. Required true issues.
+1. Required true issues. ./    -fd/at 14:32-
     1.1. Update goal and step models. ./
     1.2. Delete card in edit page ./
-2. Add more card_colors or just palette.
-    1.1.
-
+2. Add more card_colors or just palette. ./    -fd/at 14:53-
+    2.1. Keeping color code in DB. ./
+    2.2. Add palette to Create Update page. ./
 
 ---------------------------------------------
 
 
 TODO:
 may be to add filters, pagination
-
 fix time inconsistency bug in schedule and report pages
 

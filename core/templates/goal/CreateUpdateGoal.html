@@ -35,14 +35,16 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="card_color">Цветовая метка</label>
-                    <select id="card_color">
-                        <option value="white" {% if goal.card_color == 'white' %}selected{% endif %}>🤍 Белый</option>
-                        <option value="blue" {% if goal.card_color == 'blue' %}selected{% endif %}>💙 Синий</option>
-                        <option value="green" {% if goal.card_color == 'green' %}selected{% endif %}>💚 Зеленый</option>
-                        <option value="amber" {% if goal.card_color == 'amber' %}selected{% endif %}>💛 Янтарный</option>
-                        <option value="purple" {% if goal.card_color == 'purple' %}selected{% endif %}>💜 Пурпурный</option>
-                    </select>
+                    <label for="card_color_picker">Цвет карточки цели</label>
+                    <div class="custom-color-picker-wrapper">
+                    <div id="color-preview-circle" class="color-preview-circle" style="background-color: {{ goal.card_color|default:'#4a90e2' }};">
+                        <i class="bi bi-pipette"></i>
+                    </div>
+
+                    <input type="color" id="card_color" name="card_color" value="{{ goal.card_color|default:'#4a90e2' }}">
+
+                    <span id="color-hex-text" class="color-hex-text">{{ goal.card_color|default:'#4a90e2' }}</span>
+                </div>
                 </div>
                 <div class="form-group">
                     <label for="prize">Главная награда</label>

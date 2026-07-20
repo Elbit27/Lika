@@ -3,6 +3,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const addStepBtn = document.getElementById('add-step-btn');
     const goalForm = document.getElementById('goal-form');
 
+    const colorInput = document.getElementById('card_color');
+    const colorPreview = document.getElementById('color-preview-circle');
+    const colorHexText = document.getElementById('color-hex-text');
+
+    if (colorPreview && colorInput) {
+        colorPreview.addEventListener('click', () => {
+            colorInput.click();
+        });
+    }
+
+    if (colorInput) {
+        colorInput.addEventListener('input', (e) => {
+            const selectedColor = e.target.value; // Получаем HEX код, например #ff5733
+
+            if (colorPreview) colorPreview.style.backgroundColor = selectedColor;
+            if (colorHexText) colorHexText.textContent = selectedColor;
+        });
+    }
+
+
+
+
     function createStepHTML() {
         const stepDiv = document.createElement('div');
         stepDiv.className = 'step-card';
@@ -57,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const cardColorElement = document.getElementById('card_color');
-            const cardColorValue = cardColorElement ? cardColorElement.value : 'white';
+            const cardColorValue = cardColorElement ? cardColorElement.value : '#4a90e2';
 
             const payload = {
                 title: document.getElementById('title').value,
