@@ -10,9 +10,9 @@ class Goal(models.Model):
     ]
 
     title = models.CharField(max_length=100)
-    description = models.TextField()
+    description = models.TextField(blank=True)
     card_color = models.CharField(max_length=20, choices=COLOR_CHOICES, default='white')
-    prize = models.CharField(max_length=100, blank=True, null=False)
+    prize = models.CharField(max_length=100, null=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -36,7 +36,7 @@ class Goal(models.Model):
 class Step(models.Model):
     goal = models.ForeignKey('Goal', on_delete=models.CASCADE, related_name='steps')
     title = models.CharField(max_length=255)
-    description = models.TextField()
+    description = models.TextField(blank=True)
     completed = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)

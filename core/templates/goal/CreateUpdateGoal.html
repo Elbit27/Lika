@@ -12,14 +12,25 @@
         <form id="goal-form">
             <input type="hidden" id="goal-id" value="{{ goal.id|default:'' }}">
 
-            <div class="form-group">
-                <label for="title">Название цели</label>
-                <input type="text" id="title" value="{{ goal.title|default:'' }}" placeholder="Например: Выучить Django за 3 месяца" required>
+            <div class="form-top-header">
+                <h1 class="form-group label">{% if goal %}Редактирование цели{% else %}Создание цели{% endif %}</h1>
+                {% if goal %}
+                    <button type="button" class="btn-delete" onclick="deleteGoal('{{ goal.id }}')">
+                        <i class="bi bi-trash3"></i> Удалить
+                    </button>
+                {% endif %}
             </div>
 
             <div class="form-group">
+                <label for="title">Название цели</label>
+                <input type="text" id="title" value="{{ goal.title|default:'' }}" placeholder="Название цели" required>
+            </div>
+
+
+
+            <div class="form-group">
                 <label for="description">Описание цели</label>
-                <textarea id="description" rows="3" placeholder="Опишите, почему эта цель важна для вас... Explicitly detail your motivation.">{{ goal.description|default:'' }}</textarea>
+                <textarea id="description" rows="3" placeholder="Опишите, почему эта цель важна для вас...">{{ goal.description|default:'' }}</textarea>
             </div>
 
             <div class="form-row">

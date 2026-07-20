@@ -197,6 +197,22 @@ button, .btn-primary, .btn-secondary {
     background-color: #fee2e2;
 }
 
+.form-top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.form-top-header h1 {
+    font-size: 1.85rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 /* Адаптивность для мобильных телефонов */
 @media (max-width: 600px) {
     .container {
@@ -207,3 +223,5 @@ button, .btn-primary, .btn-secondary {
         gap: 16px;
     }
 }
+
+

@@ -133,6 +133,35 @@ window.deleteGame = async function(gameId) {
     }
 };
 
+
+window.deleteGoal = async function(goalId) {
+    if (!confirm("Вы уверены, что хотите удалить эту карточку? Это действие необратимо.")) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/goal/api/goals/${goalId}/`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            alert("Карточка успешно удалена");
+            window.location.href = '/goal/';
+        } else {
+            const data = await response.json();
+            alert("Ошибка при удалении: " + (data.error || "Неизвестная ошибка"));
+        }
+    } catch (e) {
+        console.error("Ошибка запроса:", e);
+        alert("Не удалось связаться с сервером.");
+    }
+};
+
+
 // getting CSRF token
 function getCookie(name) {
     let cookieValue = null;
