@@ -27,23 +27,15 @@ def schedule_view(request):
 
     for item in items:
         item_day_counts[item.id] = {}
-
         for i, rus_day in enumerate(days):
+            date_of_day_in_week = (start_of_week + timedelta(days=i)).date()
 
-            date_of_day_in_week = start_of_week + timedelta(days=i)
-            if date_of_day_in_week.date() <= now.date():
-
-                day_start = date_of_day_in_week.replace(hour=0, minute=0, second=0, microsecond=0)
-                day_end = day_start + timedelta(days=1)
-
+            if date_of_day_in_week <= now.date():
                 count = Poma.objects.filter(
                     item=item,
-                    created_at__gte=day_start,
-                    created_at__lt=day_end
+                    created_at__date=date_of_day_in_week
                 ).count()
-
                 item_day_counts[item.id][rus_day] = count
-
             else:
                 item_day_counts[item.id][rus_day] = ""
 
@@ -51,7 +43,6 @@ def schedule_view(request):
         'items': items,
         'days': days,
         'item_day_counts': item_day_counts,
-        # ИЗМЕНЕНИЕ 2: Используем today_index, который совпадает с JS (0-6)
         'today_index': js_today_index,
     })
 
@@ -95,15 +86,25 @@ def update_poma(request):
 
         item = Item.objects.get(id=item_id)
 
+        now = timezone.now()
+        start_of_week = now.replace(hour=12, minute=0, second=0, microsecond=0) - timedelta(days=now.weekday())
+        target_date = start_of_week + timedelta(days=day_index)
+
+
         if diff > 0:
-            # ДОБАВИТЬ помидоры
             for _ in range(diff):
-                Poma.objects.create(item=item, day=day)
+                Poma.objects.create(item=item, day=day, crawl_date=target_date)
 
         elif diff < 0:
-            # УДАЛИТЬ помидоры
+            day_start = target_date.replace(hour=0, minute=0, second=0, microsecond=0)
+            day_end = day_start + timedelta(days=1)
+
             for _ in range(abs(diff)):
-                last = Poma.objects.filter(item=item, day=day).last()
+                last = Poma.objects.filter(
+                    item=item,
+                    day=day,
+                    created_at__gte=day_start,
+                    crate_date__lt=day_end).last()
                 if last:
                     last.delete()
 

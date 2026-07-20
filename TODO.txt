@@ -31,11 +31,14 @@ Jul 20
 2. Add more card_colors or just palette. ./    -fd/at 14:53-
     2.1. Keeping color code in DB. ./
     2.2. Add palette to Create Update page. ./
+3. Fix time inconsistency bug in schedule and report pages.  ./    -fd/at 18:43-
+
+
 
 ---------------------------------------------
 
 
 TODO:
-may be to add filters, pagination
-fix time inconsistency bug in schedule and report pages
+Add functions to Specter Bot
+Find free deploy platform
 
